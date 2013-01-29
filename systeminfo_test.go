@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.google.com/p/goconf/conf"
 	"os/exec"
 	"runtime"
 	"strconv"
