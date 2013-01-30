@@ -1,0 +1,15 @@
+[default]
+url=http://api.cosm.com/v2/
+feedid=99624
+
+[key]
+all=oMyWvwF_rWI8e5ULO1tW9pHAUOqSAKxSUm9nZDFIOGhwWT0g
+
+[diskUsage]
+interval = 30
+
+[memoryUsage]
+interval = 10
+
+[loadAverage]
+interval = 5
