@@ -8,9 +8,6 @@ import (
 	"sysinfo"
 )
 
-var RestUrl = ""
-var ApiKey = ""
-
 type Config struct {
 	RestUrl string
 	ApiKey  string

@@ -70,3 +70,42 @@ type Datapoint struct {
 	At    time.Time `json:"at,omitempty"`
 	Value string    `json:"value"`
 }
+
+type Method string
+
+const (
+	Put         = Method("put")
+	Get         = Method("get")
+	Post        = Method("post")
+	Delete      = Method("delete")
+	Subscribe   = Method("subscribe")
+	Unsubscribe = Method("unsubscribe")
+)
+
+type SocketRequest struct {
+	Method   Method            `json:"method,omitempty"`
+	Resource string            `json:"resource,omitempty"`
+	Params   map[string]string `json:"params,omitempty"`
+	Header   map[string]string `json:"headers,omitempty"`
+	Token    string            `json:"token,omitempty"`
+	Body     *Body             `json:"body,omitempty"`
+}
+
+type SocketResponse struct {
+	Resource string            `json:"resource,omitempty"`
+	Status   int               `json:"status,omitempty"`
+	Header   map[string]string `json:"headers,omitempty"`
+	Token    string            `json:"token,omitempty"`
+	Body     *Body             `json:"body,omitempty"`
+}
+
+type Body struct {
+	Version      string       `json:"version,omitempty"`
+	Datastreams  []Datastream `json:"datastreams,omitempty"`
+	Id           string       `json:"id,omitempty"`
+	UpdatedTime  *time.Time   `json:"at,omitempty"`
+	Tags         []string     `json:"tags,omitempty"`
+	MinValue     string       `json:"min_value,omitempty"`
+	MaxValue     string       `json:"max_value,omitempty"`
+	CurrentValue string       `json:"current_value,omitempty"`
+}
