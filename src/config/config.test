@@ -6,10 +6,10 @@ feedid=99624
 all=oMyWvwF_rWI8e5ULO1tW9pHAUOqSAKxSUm9nZDFIOGhwWT0g
 
 [diskUsage]
-interval = 600
+interval = 1
 
 [memoryUsage]
-interval = 60
+interval = 1
 
 [loadAverage]
-interval = 30
+interval = 1

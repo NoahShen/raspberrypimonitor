@@ -1,8 +1,8 @@
 package sysinfo
 
 import (
-	"com.cosm"
 	"log"
+	"model"
 	"os/exec"
 	"strings"
 	"time"
@@ -13,32 +13,28 @@ const (
 )
 
 type LoadAverage struct {
-	Id        string
-	stopCh    chan int
-	interval  int
-	dsChannel chan<- *cosm.Datastream
+	Id       string
+	stopCh   chan int
+	interval int
 }
 
-func NewLoadAverage(interval int, dsCh chan<- *cosm.Datastream) *LoadAverage {
-	loadAverage := &LoadAverage{Id: "loadaverage", stopCh: make(chan int, 1)}
-	loadAverage.interval = interval
-	loadAverage.dsChannel = dsCh
+func NewLoadAverage(interval int) *LoadAverage {
+	loadAverage := &LoadAverage{Id: "loadaverage", stopCh: make(chan int, 1), interval: interval}
 	return loadAverage
 }
 
-func (self *LoadAverage) StartGetData() {
+func (self *LoadAverage) StartGetData(dvChannel chan<- *model.DataValue) {
 	go func() {
 		for {
 			select {
 			case <-time.After((time.Duration)(self.interval) * time.Second):
 				loadaverage, err := getLoadAverage()
-
 				if err != nil {
 					log.Println("get load average error", err)
 					continue
 				}
-				datestream := &cosm.Datastream{Id: self.Id, CurrentValue: loadaverage}
-				self.dsChannel <- datestream
+				value := &model.DataValue{Id: self.Id, Value: loadaverage}
+				dvChannel <- value
 			case <-self.stopCh:
 				break
 			}

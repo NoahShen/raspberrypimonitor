@@ -1,41 +1,36 @@
 package sysinfo
 
 import (
-	"com.cosm"
 	"log"
+	"model"
 	"syscall"
 	"time"
 	"utils"
 )
 
 type DiskUsage struct {
-	Id        string
-	stopCh    chan int
-	interval  int
-	dsChannel chan<- *cosm.Datastream
+	Id       string
+	stopCh   chan int
+	interval int
 }
 
-func NewDiskUsage(interval int, dsCh chan<- *cosm.Datastream) *DiskUsage {
-	diskUsed := &DiskUsage{Id: "diskUsage", stopCh: make(chan int, 1)}
-	diskUsed.interval = interval
-	diskUsed.dsChannel = dsCh
+func NewDiskUsage(interval int) *DiskUsage {
+	diskUsed := &DiskUsage{Id: "diskUsage", stopCh: make(chan int, 1), interval: interval}
 	return diskUsed
 }
-
-func (self *DiskUsage) StartGetData() {
+func (self *DiskUsage) StartGetData(dvChannel chan<- *model.DataValue) {
 	go func() {
 		for {
 			select {
 			case <-time.After((time.Duration)(self.interval) * time.Second):
 				usedPercent, err := getDiskUsage()
-
 				if err != nil {
 					log.Println("get disk used error", err)
 					continue
 				}
 				formated := utils.FormatFloatToPercent(usedPercent)
-				datestream := &cosm.Datastream{Id: self.Id, CurrentValue: formated}
-				self.dsChannel <- datestream
+				value := &model.DataValue{Id: self.Id, Value: formated}
+				dvChannel <- value
 			case <-self.stopCh:
 				break
 			}

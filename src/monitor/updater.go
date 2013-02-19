@@ -7,11 +7,12 @@ import (
 	"errors"
 	"io/ioutil"
 	"log"
+	"model"
 	"net/http"
 )
 
-func UpdateDatastreams(c *Config, ds *cosm.Datastream) error {
-
+func UpdateDatastreams(c *Config, dv *model.DataValue) error {
+	ds := &cosm.Datastream{Id: dv.Id, CurrentValue: dv.Value}
 	var url = c.RestUrl + "feeds/" + c.FeedId + "/datastreams/" + ds.Id
 	req, e := createRequest(url, "PUT", c.ApiKey, ds)
 	if e != nil {

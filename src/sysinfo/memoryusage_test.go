@@ -1,34 +1,21 @@
 package sysinfo
 
 import (
-	"code.google.com/p/goconf/conf"
-	"com.cosm"
+	"model"
 	"testing"
 	"time"
 )
 
-func TestMemoryUsage(t *testing.T) {
-	c, err := conf.ReadConfigFile("../config/config.test")
-	if err != nil {
-		t.Log(err)
-		t.FailNow()
-	}
-
-	interval, err2 := c.GetInt("memoryUsage", "interval")
-	if err2 != nil {
-		t.Log(err2)
-		t.FailNow()
-	}
-
-	dsCh := make(chan *cosm.Datastream, 1)
-	memoryUsage := NewMemoryUsage(interval, dsCh)
-	memoryUsage.StartGetData()
+func NoTestMemoryUsage(t *testing.T) {
+	dvCh := make(chan *model.DataValue, 1)
+	memoryUsage := NewMemoryUsage(1)
+	memoryUsage.StartGetData(dvCh)
 	go func() {
-		for ds := range dsCh {
-			t.Log("memoryUsage:", ds.CurrentValue, "%")
+		for v := range dvCh {
+			t.Log("memoryUsage:", v.Value, "%")
 		}
 	}()
-	time.Sleep(10 * time.Second)
+	time.Sleep(2 * time.Second)
 	memoryUsage.Stop()
 	time.Sleep(2 * time.Second)
 }

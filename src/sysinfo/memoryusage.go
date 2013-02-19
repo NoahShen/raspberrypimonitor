@@ -1,41 +1,37 @@
 package sysinfo
 
 import (
-	"com.cosm"
 	"log"
+	"model"
 	"syscall"
 	"time"
 	"utils"
 )
 
 type MemoryUsage struct {
-	Id        string
-	stopCh    chan int
-	interval  int
-	dsChannel chan<- *cosm.Datastream
+	Id       string
+	stopCh   chan int
+	interval int
 }
 
-func NewMemoryUsage(interval int, dsCh chan<- *cosm.Datastream) *MemoryUsage {
-	memoryUsage := &MemoryUsage{Id: "memoryUsage", stopCh: make(chan int, 1)}
-	memoryUsage.interval = interval
-	memoryUsage.dsChannel = dsCh
+func NewMemoryUsage(interval int) *MemoryUsage {
+	memoryUsage := &MemoryUsage{Id: "memoryUsage", stopCh: make(chan int, 1), interval: interval}
 	return memoryUsage
 }
 
-func (self *MemoryUsage) StartGetData() {
+func (self *MemoryUsage) StartGetData(dvChannel chan<- *model.DataValue) {
 	go func() {
 		for {
 			select {
 			case <-time.After((time.Duration)(self.interval) * time.Second):
 				usedPercent, err := getMemoryUsage()
-
 				if err != nil {
 					log.Println("get memory used error", err)
 					continue
 				}
 				formated := utils.FormatFloatToPercent(usedPercent)
-				datestream := &cosm.Datastream{Id: self.Id, CurrentValue: formated}
-				self.dsChannel <- datestream
+				value := &model.DataValue{Id: self.Id, Value: formated}
+				dvChannel <- value
 			case <-self.stopCh:
 				break
 			}
